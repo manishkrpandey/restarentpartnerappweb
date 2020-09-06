@@ -25,7 +25,11 @@ function Addmenu() {
     });
     const [dishType, setdishType] = React.useState('1');
     const [dishName, setdishName] = React.useState('');
+    
+    const allInputs = {imgUrl: ''}
     const [imageFileData, setimageFileData] = React.useState('');
+    const [imageAsUrl, setImageAsUrl] = useState(allInputs)
+
     const [dishVarient, setdishVarient] = React.useState([{name:'full', price:0}]);
     const quantityTypeArray = {
         plate :['full', 'half' , 'quater'],
@@ -77,26 +81,36 @@ function Addmenu() {
     }
     const handleMenuImage = (event) =>{
         let imageData = event.target.files[0];
-        console.log(imageData , 'imageData+++++')
-        // let reader = new FileReader();
-        // reader.onload = (event) =>{
-        //     setimageFileData(event.target.result)
-        // }
-        // reader.readAsDataURL(imageData)
-        
+        setimageFileData(imageFile => (imageData))
     }
     const validField =() =>{
         if(!dishName){
             setvalidishName('Add dish Name')
         }
     }
-    const saveMenuData =(e)=>{
+    const handleImage =(e)=>{
         e.preventDefault();
-        const uploadTask = storage
-        // if (imageAsFile === "") {
-        //     console.error(`not an image, the image file is a ${typeof imageAsFile}`);
-        //   }
-        // const uploadTask = storage.ref(`/images/${imageAsFile.name}`).put(imageAsFile);
+        if(imageFileData === '' ) {
+            console.error(`not an image, the image file is a ${typeof(imageFileData)}`)
+        }
+        const uploadTask = storage.ref(`/images/${imageFileData.name}`).put(imageFileData)
+        uploadTask.on('state_changed', 
+            (snapShot) => {
+            //takes a snap shot of the process as it is happening
+            console.log(snapShot)
+            }, (err) => {
+            //catches the errors
+            console.log(err)
+            }, () => {
+            // gets the functions from storage refences the image storage in firebase by the children
+            // gets the download url then sets the image from firebase as the value for the imgUrl key:
+            storage.ref('images').child(imageFileData.name).getDownloadURL()
+            .then(fireBaseUrl => {
+                setImageAsUrl(prevObject => ({...prevObject, imgUrl: fireBaseUrl}))
+            })
+        })
+    }
+    const saveMenuData =(e)=>{
         validField()
         if(!validishName){
             let mId = resId + menuCategoryType[dishType] + '_' + (resMenuData.category[dishType].menuitems.length + 1)
@@ -114,6 +128,7 @@ function Addmenu() {
             .then(
                 (result) =>{
                     setdishName('')
+                    setImageAsUrl({imgUrl: ''})
                     dishVarient.map((key , index) => {
                         if(dishVarient[index].price){
                             let priceVarient = [...dishVarient]
@@ -177,12 +192,26 @@ function Addmenu() {
                 </div>
             </div>
             <div className="row">
-                <div className="col">
+                <div className="col-12">
                     <div className="form-group">
                         <label>Select menu Image</label>
                         <input type="file" className="custom-select" required onChange={handleMenuImage} required />
                     </div>
                 </div>
+                {
+                    imageFileData ?(
+                    <>
+                    <div className="col-6 mb-3">
+                        {imageAsUrl.imgUrl ?(<><div className="imageWraper">
+                            <img src={imageAsUrl.imgUrl} />
+                        </div></>):('')}
+                    </div>
+                    <div className="col-6 col-6 mb-3 d-flex justify-content-end">
+                        <button className="btn btn-primary btnHeight" onClick={handleImage}>Upload</button>
+                    </div>
+                    </>
+                    ):('')
+                }
             </div>
             <div> 
                 {
