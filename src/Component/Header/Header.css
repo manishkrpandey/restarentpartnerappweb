@@ -1,0 +1,15 @@
+.header{
+    padding:15px 0;
+    position: relative;
+    display: flex;
+}
+.Menu .ToggleIcon{
+    width: 15px;
+    height: auto;
+    fill:#fff;
+}
+.Menu .Menulist{
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+}

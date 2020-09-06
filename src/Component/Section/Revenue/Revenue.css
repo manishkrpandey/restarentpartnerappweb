@@ -1,0 +1,11 @@
+.revenueList{
+    padding: 0px;
+    list-style: none;
+}
+.totalRevenue{
+    font-size: 25px;
+}
+.revenueList .revenueTitle{
+    font-size: 12px;
+    color: #c7c7c7;
+}
