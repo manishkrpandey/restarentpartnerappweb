@@ -4,7 +4,7 @@ const ProtectedRoute = ({component:Com,...rest}) => (
         <Route 
             {...rest}
             render = {(props) =>(
-                localStorage.getItem('login')?(
+                localStorage.getItem('token')?(
                     <Com {...props} />
                 ):
                 <Redirect exact to='/' />

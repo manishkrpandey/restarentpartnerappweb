@@ -2,19 +2,14 @@ import React, { useEffect } from 'react';
 import {Provider} from 'react-redux'
 import { BrowserRouter as Router, Route , Switch, useHistory, Redirect } from 'react-router-dom'
 import './App.css';
-import Home from './Component/Home/Home'
 import Login from './Component/Login/Login'
-//import Orders from './Component/Orders/Orders'
-import Addmenu from './Component/Addmenu/Addmenu'
-import Notfound from './Component/Notfound'
-import ProtectedRoute from './ProtectedRoute'
-import {FakeAuth} from './Service'
 import {createStore} from 'redux'
 import  rootReducer from './Store/reducer'
+import Dashboard from './Component/Header/drawer'
 const store = createStore(rootReducer)
 function App() {
   let history = useHistory()
-  let checkAuth = FakeAuth.authenticate(); 
+  let checkAuth = true; 
   useEffect(()=>{
     if(checkAuth){
       history.push('/home')
@@ -25,17 +20,42 @@ function App() {
   return (
     <Provider store={store}>
     <div className="App container-fluid">
-      <Router>
-        <Switch>
-          <Route exact path="/" component={Login} />
-          <Route exact path="/addmenu" component={Addmenu} />
-          <ProtectedRoute  path="/home" component={Home} />
-          <Redirect to="/" />
-        </Switch>
-      </Router>
+    <Switch>
+        <Route exact path="/">
+          <Login />
+        </Route>
+        <PrivateRoute exact path="/home">
+          <Dashboard />
+        </PrivateRoute>
+        <Route path="*">
+        <Redirect
+            to={{pathname:"/"}}
+          />
+          </Route>
+      </Switch>
     </div>
     </Provider>
   );
 }
 
 export default App;
+
+function PrivateRoute({ children, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+       localStorage.getItem('token') ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/",
+              state: { from: location }
+            }}
+          />
+        )
+      }
+    />
+  );
+}
