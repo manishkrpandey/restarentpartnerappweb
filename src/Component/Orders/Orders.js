@@ -1,102 +1,141 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React , {useState , useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-  
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`scrollable-auto-tabpanel-${index}`}
-        aria-labelledby={`scrollable-auto-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box p={3}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
-  TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
-  };
-  
-  function a11yProps(index) {
-    return {
-      id: `scrollable-auto-tab-${index}`,
-      'aria-controls': `scrollable-auto-tabpanel-${index}`,
-    };
-  }
-  const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-      width: '100%',
-      backgroundColor: theme.palette.background.paper,
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import CallMadeIcon from '@material-ui/icons/CallMade';
+import { findByLabelText } from '@testing-library/react';
+import Acceptrders from './Acceptorders'
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    '& > *': {
+      margin: theme.spacing(1),
+      width: theme.spacing(16),
+      height: theme.spacing(16),
     },
-  }));  
-function Orders(){
-    const classes = useStyles();
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
+  },
+  gapPaper:{
+    padding:'15px',
+    marginBottom:'10px'
+  },
+  gapCard:{
+    marginBottom:'10px',
+    overflow:'visible',
+    position:'relative'
+  },
+  actionBorder:{
+    borderTopWidth:'1px',
+    borderTopStyle:'dotted',
+    borderTopColor:'#e7e7e7',
+  },
+  newOrders:{
+    display:'flex',
+    justifyContent:'space-between',
+    background: 'green',
+    color: '#fff',
+  },
+  timmer:{
+    textAlign: 'center',
+    background: '#efefef',
+    borderRadius: '6px'
+  },
+  textCenter:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex'
+  }
+}));
+function Orders() {
+  const [neworder, setNeworder] = useState(false)
+  const [timer , setTimer] = useState(0)
+  const classes = useStyles();
+  const redirectAccept =()=>{
+    setNeworder(true)
+  }
+  useEffect(()=>{
+    const stopInterval = setInterval(() => {
+      setTimer(timer => timer + 1);
+    }, 1000);
+    return () => clearInterval(stopInterval)
+  }, [])
+ 
   return (
-    <div className="row">
-        <div className={classes.root}>
-        <AppBar position="static" color="default">
-            <Tabs
-            value={value}
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example"
-            >
-            <Tab label="Item One" {...a11yProps(0)} />
-            <Tab label="Item Two" {...a11yProps(1)} />
-            <Tab label="Item Three" {...a11yProps(2)} />
-            <Tab label="Item Four" {...a11yProps(3)} />
-            <Tab label="Item Five" {...a11yProps(4)} />
-            <Tab label="Item Six" {...a11yProps(5)} />
-            <Tab label="Item Seven" {...a11yProps(6)} />
-            </Tabs>
-        </AppBar>
-        <TabPanel value={value} index={0}>
-            Item One
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-            Item Two
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-            Item Three
-        </TabPanel>
-        <TabPanel value={value} index={3}>
-            Item Four
-        </TabPanel>
-        <TabPanel value={value} index={4}>
-            Item Five
-        </TabPanel>
-        <TabPanel value={value} index={5}>
-            Item Six
-        </TabPanel>
-        <TabPanel value={value} index={6}>
-            Item Seven
-        </TabPanel>
-        </div>
-    </div>
+      neworder?(
+        <Acceptrders/>
+      ):(
+        <React.Fragment className={classes.root}>
+          <Grid container spacing={3} >
+            <Grid item xs={7} className={classes.textCenter} >
+            <Typography component="p" variant="caption" >5th Block Kormangala</Typography>
+            </Grid>
+            <Grid item xs={5} >
+               <div className={classes.timmer}>
+                <Typography component="span" >{timer}m</Typography>
+                <Typography component="p" variant="caption">Prepration Time</Typography>
+               </div>
+            </Grid>
+            <Grid item xs={12} className={classes.newOrders} onClick=
+            {redirectAccept}>
+              <Typography component="span">You have new order</Typography>
+              <span className="circleWrapper">
+                <CallMadeIcon/>
+              </span>
+            </Grid>
+            <Grid item xs={12} >
+              <Paper square  className={classes.gapPaper}>
+                <Card variant="outlined" className={classes.gapCard}>
+                  <CardContent>
+                    <Grid container>
+                    <Grid item xs={12} >
+                      <Grid container>
+                          <Grid item xs={6}>
+                          <Typography className='menustatustag' variant="body2" component="span">
+                            Preparing
+                          </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography component="span" variant="body2">
+                              Driver arriving in 5min
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={12} className="mt-2">
+                        <Typography component="span" className={classes.gapCard}>
+                          <strong>#2222</strong>
+                        </Typography>
+                        <Typography component="p" variant="caption">
+                          12:55Pm Ltchi with ice cream
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                    <CardActions className={classes.actionBorder}>
+                      <Grid container>
+                        <Grid item xs={6}>
+                          <Button size="small" color="primary">
+                            Mark Ready
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button size="small" color="primary">
+                            Track Driver
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </CardActions>
+                </Card>
+              </Paper>
+            </Grid>
+          </Grid>
+        </React.Fragment>
+      )
   );
-}
+      }
 export default Orders;

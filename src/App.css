@@ -8,6 +8,11 @@ body,html{
   margin:0px;
   height:100%;
 }
+#root,
+.makeStyles-root-1,
+.App{
+  height:100%;
+}
 body{
   font-size: 14px;
   background: #272c3f;
@@ -15,4 +20,15 @@ body{
 }
 .showError{
   color: red;
+}
+.menustatustag{
+  position: absolute;
+  top: 20px;
+  left:-10px;
+  background: orange;
+  padding: 1px 15px;
+}
+.appHeaderTitle{
+  font-size: 22px;
+    margin-bottom: 1rem;
 }

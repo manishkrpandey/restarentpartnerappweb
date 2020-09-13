@@ -24,6 +24,7 @@ import { shallowEqual, useSelector,useDispatch } from 'react-redux'
 import Home from './../Home/Home'
 import Login from './../Login/Login'
 import Addmenu from './../Addmenu/Addmenu'
+import Orders from './../Orders/Orders'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -222,6 +223,7 @@ export default function Dashboard() {
             <Route exact path="/" render={() =>      <Login />  } />
             <Route path="/addmenu" render={() =>   <Addmenu />}  />
             <Route path="/home" render={() =>   <Home />}  />
+            <Route path="/orders" render={() =>   <Orders />}  />
           </Switch>
           </Container>
         </main>
