@@ -62,11 +62,17 @@ const reducer = (state = initState, action) => {
                 }
             }
         case 'Add_RESTMENU':
+            let menu = state.resMenu.category;
+            menu[action.ctype].menuitems = [...state.resMenu.category[action.ctype].menuitems,action.resMenu];
             return {
                 ...state,
                 resMenu:{
-                    ...state.resMenu.category[action.ctype].menuitems,
-                    ...action.resMenu
+                    ...state.resMenu,
+                    category: {
+                        ...state.resMenu.category,
+                        ...menu
+                        }
+                    
                 }
             }
         default:

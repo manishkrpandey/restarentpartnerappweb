@@ -11,6 +11,7 @@ export const addRestraurent = (resInfo) =>{
     }
 }
 export const addRestraurentMenu = (resMenu , ctype) =>{
+    console.log(resMenu,ctype);
     return{
         type:'Add_RESTMENU',
         resMenu,

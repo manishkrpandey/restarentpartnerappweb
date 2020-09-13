@@ -5,7 +5,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import {addRestraurentMenu} from '../../Store/action/Action'
-import { storage } from "../../Service";
+import { storage } from "../../service/firebase";
 import { useSelector , useDispatch} from "react-redux";
 import './AddMenu.css'
 const menuCategoryType = {
@@ -28,7 +28,7 @@ function Addmenu() {
     
     const allInputs = {imgUrl: ''}
     const [imageFileData, setimageFileData] = React.useState('');
-    const [imageAsUrl, setImageAsUrl] = useState(allInputs)
+    const [imageAsUrl, setImageAsUrl] = useState('');
 
     const [dishVarient, setdishVarient] = React.useState([{name:'full', price:0}]);
     const quantityTypeArray = {
@@ -63,11 +63,12 @@ function Addmenu() {
     const handlePrice =(event , index , type)=>{
         setvalidPrice('')
         let priceVarient = [...dishVarient]
-        priceVarient[index][type] = event.target.value
-        setdishVarient(priceVarient => [...priceVarient])
+        priceVarient[index].price = ++event.target.value
+        setdishVarient(priceVarient)
+        console.log('event.target.value',priceVarient);
     }
     const createVarient = (e, index) =>{
-        setdishVarient(dishVarient => [...dishVarient , {name:'full', price:''}])
+        setdishVarient(dishVarient => [...dishVarient , {name:'full', price:0}])
     }
     const removeVarient = (index) =>{
         let copyVarient = [...dishVarient]
@@ -106,36 +107,38 @@ function Addmenu() {
             // gets the download url then sets the image from firebase as the value for the imgUrl key:
             storage.ref('images').child(imageFileData.name).getDownloadURL()
             .then(fireBaseUrl => {
-                setImageAsUrl(prevObject => ({...prevObject, imgUrl: fireBaseUrl}))
+                console.log(fireBaseUrl,'fireBaseUrl');
+                setImageAsUrl(fireBaseUrl);
             })
         })
     }
     const saveMenuData =(e)=>{
         validField()
         if(!validishName){
-            let mId = resId + menuCategoryType[dishType] + '_' + (resMenuData.category[dishType].menuitems.length + 1)
+            let mId = resId + menuCategoryType[dishType] + '_' + (resMenuData.category[dishType].menuitems.length)
             let menuCategory = {
                 type:dishType,
                 veg:foodType.veg,
                 menuId: mId,
                 name: dishName,
                 status:status.item,
-                imageUrl: imageFileData,
+                imageUrl: imageAsUrl,
                 variant: dishVarient
             }
+            dispatch(addRestraurentMenu(menuCategory,dishType));
             fetch('https://jsonplaceholder.typicode.com/todos/1')
             .then(response => response.json())
             .then(
                 (result) =>{
                     setdishName('')
-                    setImageAsUrl({imgUrl: ''})
-                    dishVarient.map((key , index) => {
-                        if(dishVarient[index].price){
-                            let priceVarient = [...dishVarient]
-                            priceVarient[index]['price'] = 0
-                            setdishVarient(priceVarient => [...priceVarient])
-                        }
-                    })  
+                    setImageAsUrl('')
+                    // dishVarient.map((key , index) => {
+                    //     if(dishVarient[index].price){
+                    //         let priceVarient = [...dishVarient]
+                    //         priceVarient[index]['price'] = 0
+                    //         setdishVarient(priceVarient => [...priceVarient])
+                    //     }
+                    // })  
                 },
                 (error) =>{
                     alert(error)
@@ -202,8 +205,8 @@ function Addmenu() {
                     imageFileData ?(
                     <>
                     <div className="col-6 mb-3">
-                        {imageAsUrl.imgUrl ?(<><div className="imageWraper">
-                            <img src={imageAsUrl.imgUrl} />
+                        {imageAsUrl ?(<><div className="imageWraper">
+                            <img src={imageAsUrl} />
                         </div></>):('')}
                     </div>
                     <div className="col-6 col-6 mb-3 d-flex justify-content-end">
