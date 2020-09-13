@@ -95,7 +95,11 @@ export default function SignIn(props) {
   const [otpfromServer,setOtpfromServer]= useState();
   const [registeredMobileNumber,setMobileNumber]= useState('');
   const [otpReceived,setotpReceived]= useState('');
+  const [password,setpassword]= useState('');
+  const [restaurentId,setrestaurentId]= useState('');
   const [isValidMobileNumber,setisValidMobileNumber]= useState(false); 
+  const [isValidRestaurentId,setisValidRestaurentId]= useState(false); 
+  const [isValidpassword,setisValidpassword]= useState(false); 
   const [isValidMobileOTP,setisValidMobileOTP]= useState(false); 
   const formRef = useRef();
   const formRefOtp = useRef();
@@ -110,7 +114,7 @@ export default function SignIn(props) {
     "employee_type_id": "1"
   }
     event.preventDefault();
-     if(isValidMobileNumber){
+     if(isValidMobileNumber && isValidRestaurentId && isValidpassword){
       getOTPService(getOtpServiceReqObject).then((res) => {
        if(res && res.data && res.data.data){
         setOtpfromServer(res.data.data.otp);
@@ -189,6 +193,21 @@ export default function SignIn(props) {
     }
   }
 
+  const checkValidateDataPassword = (data) =>{
+    let passwordRegex = /[0-9a-zA-Z]/g
+    console.log('data.target.value',data.target.value);
+    setpassword(data.target.value);
+    let validPassword = passwordRegex.test(data.target.value);
+    setisValidpassword(validPassword);
+  }
+
+  const checkValidateDataRestaurent = (data) =>{
+    let passwordRegex = /[0-9a-zA-Z]/g
+    setrestaurentId(data.target.value);
+    let validRestaurentId = passwordRegex.test(data.target.value);
+    setisValidRestaurentId(validRestaurentId);
+  }
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -201,7 +220,7 @@ export default function SignIn(props) {
         </Typography>
         <form className={classes.form} ref={formRef} noValidate>
           {
-            isMobile ? ( <TextField
+            isMobile ? (<> <TextField
               variant="outlined"
               margin="normal"
               required
@@ -215,7 +234,38 @@ export default function SignIn(props) {
               onChange={checkValidateData}
               error={!isValidMobileNumber}
             helperText={!isValidMobileNumber ? "Number is not valid. Please enter your registered Number":''}
-            />) : (<TextField
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Restaurent Id"
+              name="email"
+              autoComplete="email"
+              value={restaurentId}
+              autoFocus
+              onChange={checkValidateDataRestaurent}
+              error={!isValidRestaurentId}
+            helperText={!isValidRestaurentId ? "RestaurentId Id  is not valid. Please enter your registered Restaurent Id":''}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Password"
+              name="email"
+              autoComplete="email"
+              value={password}
+              autoFocus
+              onChange={checkValidateDataPassword}
+              error={!isValidpassword}
+            helperText={!isValidpassword ? "Password is not valid. Please enter your password":''}
+            />
+            </>) : (<TextField
               ref={formRefOtp}
               variant="outlined"
               margin="normal"
