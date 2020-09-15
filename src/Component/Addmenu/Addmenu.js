@@ -8,6 +8,8 @@ import {addRestraurentMenu} from '../../Store/action/Action'
 import { storage } from "../../service/firebase";
 import { useSelector , useDispatch} from "react-redux";
 import './AddMenu.css'
+import {MenuListingComponenent} from './menuListing'
+
 const menuCategoryType = {
     0:'M',
     1:'B',
@@ -264,6 +266,11 @@ function Addmenu() {
                 Save Menu
             </Button>
         </div>
+        </div>
+        <div>
+            <MenuListingComponenent data={resMenuData}>
+
+            </MenuListingComponenent>
         </div>
       </div>
     )

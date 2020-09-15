@@ -68,10 +68,9 @@ const reducer = (state = initState, action) => {
                 ...state,
                 resMenu:{
                     ...state.resMenu,
-                    category: {
-                        ...state.resMenu.category,
+                    category: [
                         ...menu
-                        }
+                    ]
                     
                 }
             }
