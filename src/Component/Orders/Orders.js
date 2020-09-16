@@ -61,10 +61,12 @@ function Orders() {
 
   useEffect(()=>{
     const stopInterval = setInterval(() => {
-      setTimer(timer => timer - 1);
+      if(timer>0){
+        setTimer(timer => timer - 1);
+      }
     }, 1000);
     return () => clearInterval(stopInterval)
-  }, [])
+  }, [timer])
  
   return (
       neworder?(
