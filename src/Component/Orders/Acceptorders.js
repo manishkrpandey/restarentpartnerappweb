@@ -13,12 +13,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 const useStyles = makeStyles((theme) => ({
     root: {
-      display: 'flex',
-      '& > *': {
-        margin: theme.spacing(1),
-        width: theme.spacing(16),
-        height: theme.spacing(16),
-      }
+      display: 'flex'
     },
     gapPaper:{
         padding:'15px',
@@ -39,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 function Acceptrders() {
     const classes = useStyles();
     return (
-        <React.Fragment className={classes.root}>
+        <div className={classes.root}>
         <Grid container spacing={3}>
             <Grid item xs={12} >
                 <Typography component="h2" >Accept Order</Typography>
@@ -83,7 +78,7 @@ function Acceptrders() {
             </Paper>
           </Grid>
         </Grid>
-      </React.Fragment>
+      </div>
     );
 }
 export default Acceptrders;

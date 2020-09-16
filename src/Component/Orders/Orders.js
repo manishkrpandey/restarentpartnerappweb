@@ -13,12 +13,7 @@ import { findByLabelText } from '@testing-library/react';
 import Acceptrders from './Acceptorders'
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    '& > *': {
-      margin: theme.spacing(1),
-      width: theme.spacing(16),
-      height: theme.spacing(16),
-    },
+    display: 'flex'
   },
   gapPaper:{
     padding:'15px',
@@ -53,14 +48,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 function Orders() {
   const [neworder, setNeworder] = useState(false)
-  const [timer , setTimer] = useState(0)
+  const [timer , setTimer] = useState(300);
   const classes = useStyles();
   const redirectAccept =()=>{
     setNeworder(true)
   }
+  const convertTominSec = (second) =>{
+    let min = Math.floor(second/60);
+    let sec = second%60;
+    return min + ' M ' + sec + ' S'
+  }
+
   useEffect(()=>{
     const stopInterval = setInterval(() => {
-      setTimer(timer => timer + 1);
+      setTimer(timer => timer - 1);
     }, 1000);
     return () => clearInterval(stopInterval)
   }, [])
@@ -69,14 +70,14 @@ function Orders() {
       neworder?(
         <Acceptrders/>
       ):(
-        <React.Fragment className={classes.root}>
+        <div className={classes.root}>
           <Grid container spacing={3} >
             <Grid item xs={7} className={classes.textCenter} >
             <Typography component="p" variant="caption" >5th Block Kormangala</Typography>
             </Grid>
             <Grid item xs={5} >
                <div className={classes.timmer}>
-                <Typography component="span" >{timer}m</Typography>
+                <Typography component="span" >{convertTominSec(timer)}m</Typography>
                 <Typography component="p" variant="caption">Prepration Time</Typography>
                </div>
             </Grid>
@@ -134,7 +135,7 @@ function Orders() {
               </Paper>
             </Grid>
           </Grid>
-        </React.Fragment>
+        </div>
       )
   );
       }
