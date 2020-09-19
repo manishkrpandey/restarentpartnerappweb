@@ -1,56 +1,3 @@
-// import React ,{useState} from 'react'
-// import { useHistory } from 'react-router-dom'
-// import './Login.css'
-// import {FakeAuth} from '../../Service'
-// import { useSelector , useDispatch } from "react-redux";
-// import {addUserInfo} from '../../Store/action/Action'
-// function Login(props){
-//     const userData = useSelector(state => state.reducer.userInfo)
-//     const [input, setInput] = useState('')
-//     const [error , setError] = useState(false)
-//     const history = useHistory()
-//     async function fetchLogin(){
-//         let login = await fetch('https://jsonplaceholder.typicode.com/todos/1')
-//         login.json().then((data) =>{
-//             localStorage.setItem("login" , input)
-//             const checkAuth = FakeAuth.authenticate()
-//             if(checkAuth){
-//                 history.push('/home')
-//             }else{
-//                 history.push('/')
-//             }
-//         },(error)=>{
-//             console.log(error , 'data login')
-//         })
-//     }
-//     const chackAuth = (data) => {
-//         let mRegex = /^[6789]\d{9}$/
-//         let validMobileNumber = mRegex.test(data);
-//         setInput(data)
-//         if(validMobileNumber){
-//             setError(false)
-//             fetchLogin()
-//         }else{
-//             setError(true)
-//         }
-//     }
-//     return(
-//         <div className="card loginBox">
-//             <div className="card-body loginCard">
-//                 <h2>Login</h2>
-//                 <div className="form-group mt-3">
-//                     <input value={input} type={'number'} onChange={e => chackAuth(e.target.value)} className="form-control" placeholder="contact number..." type="number" />
-//                     {error?(<span className="showError">Add Vali Number</span>):('')}
-//                 </div>
-//                 <div className="form-group">
-//                     <button onClick={chackAuth} className="btn btn-primary btn-block">Enater Mobile Number</button>
-//                 </div>
-//             </div>
-//         </div>
-//     )
-// }
-// export default Login
-
 import React, { useEffect, useState,useRef } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -65,6 +12,8 @@ import { verifyOTPService,getOTPService } from "./../../service/login";
 import { shallowEqual, useSelector,useDispatch } from 'react-redux'
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import {getRestaurentMenu} from './../../service/menu.service'
+import { addRestraurentInitial,isMenuAlreadyAdded } from './../../Store/action/Action'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -88,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignIn(props) {
+  const resMenuData = useSelector(state => state.reducer.resMenu);
   const [open, setOpen] = React.useState(false);
   const [sucessmsg,setSuccessMsg]= useState('');
   const [severity,setSuccessseverity]= useState(1);
@@ -108,7 +58,6 @@ export default function SignIn(props) {
   const [isMobile,setIsMobile]=useState(true);
   
  const handleSignIn = (event) => {
-   console.log(registeredMobileNumber)
   const getOtpServiceReqObject = {
     "mobile_number":registeredMobileNumber,
     "employee_type_id": "1"
@@ -147,7 +96,6 @@ export default function SignIn(props) {
     };
 
   const handleVerifyOtp = (event) => {
-    console.log('data.target.value',otpReceived);
     const verifyOtpServiceReqObject ={
       "mobile_number":registeredMobileNumber,
       "employee_type_id": "1",
@@ -166,11 +114,33 @@ export default function SignIn(props) {
     // }
       if(isValidMobileOTP){
         verifyOTPService(verifyOtpServiceReqObject).then(res=>{
-          console.log(res,'res',res.data);
           if(res && res.data && res.data.status==="success"){
             localStorage.setItem('token','1234');
             // dispatch(addProfileDtails(data));
-            history.push('/home')
+            history.push('/home');
+            getRestaurentMenu({"command":"getmenu",
+            "restaurant_id":"21"}).then(res=>{
+              if(res.data && res.data.data){
+                let restaurentId = res.data && res.data.data && res.data.data[0].restaurant_id ? res.data.data[0].restaurant_id : 0;
+                let resMenu = JSON.parse(atob(res.data.data[0].menu_items));
+                    dispatch(addRestraurentInitial(resMenu));
+                    console.log('resMenu',resMenuData);
+                    let menuitems = [];
+                    let rows = resMenu.category.map((category)=>{
+                      return category.menuitems.map((row) => {
+                        menuitems.push(row);
+                          return row;
+                      } 
+                      )
+                    });
+                    if(menuitems.length==0){
+                      dispatch(isMenuAlreadyAdded(false,restaurentId));
+                    }else{
+                      dispatch(isMenuAlreadyAdded(true,restaurentId));
+                    }
+              }
+            });
+
           }
         })
       }
@@ -179,13 +149,11 @@ export default function SignIn(props) {
   const checkValidateData = (data) =>{
     let mRegex = /^[6789]\d{9}$/
     let otpRegex = /[0-9]\d\d\d/g
-    console.log('data.target.value',data.target.value);
     
     if(isMobile){
       setMobileNumber(data.target.value); 
        let validMobileNumber = mRegex.test(data.target.value);
        setisValidMobileNumber(validMobileNumber);  
-       console.log(registeredMobileNumber);
     }else{
         let validOtp = otpRegex.test(data.target.value);
         setotpReceived(data.target.value);
@@ -195,7 +163,6 @@ export default function SignIn(props) {
 
   const checkValidateDataPassword = (data) =>{
     let passwordRegex = /[0-9a-zA-Z]/g
-    console.log('data.target.value',data.target.value);
     setpassword(data.target.value);
     let validPassword = passwordRegex.test(data.target.value);
     setisValidpassword(validPassword);

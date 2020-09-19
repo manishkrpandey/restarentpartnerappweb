@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom'
 function Menulist(props){
   const history = useHistory()
     const gotoOders = (data) => {
-      console.log(data)
       switch(data){
         case 'Orders':
           history.push('/orders')

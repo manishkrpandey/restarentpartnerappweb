@@ -9,6 +9,7 @@ import { storage } from "../../service/firebase";
 import { useSelector , useDispatch} from "react-redux";
 import './AddMenu.css'
 import {MenuListingComponenent} from './menuListing'
+import { addRestaurentMenu,updateRestaurentMenu } from './../../service/menu.service'
 
 const menuCategoryType = {
     0:'M',
@@ -17,7 +18,10 @@ const menuCategoryType = {
 }
 function Addmenu() {
     const dispatch = useDispatch()
-    const resMenuData = useSelector(state => state.reducer.resMenu)
+    const resMenuDataStore= useSelector(state => state.reducer);
+    const resMenuData = useSelector(state => state.reducer.resMenu);
+    const isMenuadded = resMenuDataStore.isMenuadded;
+    console.log('isMenuadded',isMenuadded,resMenuDataStore);
     const resId = resMenuData && resMenuData.restarentId ? resMenuData.restarentId : '';
     const [status, setstatus] = React.useState({
         item: true,
@@ -63,11 +67,12 @@ function Addmenu() {
         setdishVarient(copyVarient => [...copyVarient])
     }
     const handlePrice =(event , index , type)=>{
-        setvalidPrice('')
-        let priceVarient = [...dishVarient]
-        priceVarient[index].price = ++event.target.value
-        setdishVarient(priceVarient)
-        console.log('event.target.value',priceVarient);
+        if(event.target.value>=0){
+            setvalidPrice('')
+            let priceVarient = [...dishVarient]
+            priceVarient[index].price = event.target.value
+            setdishVarient(priceVarient)
+        }
     }
     const createVarient = (e, index) =>{
         setdishVarient(dishVarient => [...dishVarient , {name:'full', price:0}])
@@ -100,7 +105,7 @@ function Addmenu() {
         uploadTask.on('state_changed', 
             (snapShot) => {
             //takes a snap shot of the process as it is happening
-            console.log(snapShot)
+        
             }, (err) => {
             //catches the errors
             console.log(err)
@@ -116,7 +121,7 @@ function Addmenu() {
     }
     const saveMenuData =(e)=>{
         validField()
-        if(!validishName){
+        if(dishName){
             let mId = resId + menuCategoryType[dishType] + '_' + (resMenuData.category[dishType].menuitems.length)
             let menuCategory = {
                 type:dishType,
@@ -127,25 +132,34 @@ function Addmenu() {
                 imageUrl: imageAsUrl,
                 variant: dishVarient
             }
+ 
             dispatch(addRestraurentMenu(menuCategory,dishType));
-            fetch('https://jsonplaceholder.typicode.com/todos/1')
-            .then(response => response.json())
-            .then(
-                (result) =>{
-                    setdishName('')
-                    setImageAsUrl('')
-                    // dishVarient.map((key , index) => {
-                    //     if(dishVarient[index].price){
-                    //         let priceVarient = [...dishVarient]
-                    //         priceVarient[index]['price'] = 0
-                    //         setdishVarient(priceVarient => [...priceVarient])
-                    //     }
-                    // })  
-                },
-                (error) =>{
-                    alert(error)
+            if(isMenuadded){
+                let data =  {
+                    "command": "updatemenu",
+                    "menu_items": btoa(JSON.stringify(resMenuData)),
+                    "menu_tags": "#veg #sweets",
+                    "restaurant_id":resMenuDataStore.restaurantId,
                 }
-            )
+                updateRestaurentMenu(data).then(res=>{
+                    setdishName('')
+                    setImageAsUrl('') 
+                })
+                
+
+            }else{
+                let data =  {
+                    "command": "setmenu",
+                    "menu_items": btoa(JSON.stringify(resMenuData)),
+                    "menu_tags": "#veg #sweets",
+                    "restaurant_id":resMenuDataStore.restarentId,
+                }
+                addRestaurentMenu(data).then(res=>{
+                    setdishName('')
+                    setImageAsUrl('') 
+                });
+            }
+ 
         }
     }
     return(
@@ -234,7 +248,7 @@ function Addmenu() {
                                         </select>
                                     </div>
                                     <div className="col-4">
-                                        <input type="text" placeholder="price" value={dishVarient[index].price} onChange={(e) => handlePrice(e , index , 'price')} className="form-control" id={'price' + index} />
+                                        <input type="number" placeholder="price" value={dishVarient[index].price} onChange={(e) => handlePrice(e , index , 'price')} className="form-control" id={'price' + index} />
                                     </div>
                                     <div className="col-4 d-flex justify-content-end">
                                         {   dishVarient.length === 1 ?(

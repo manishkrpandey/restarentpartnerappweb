@@ -4,6 +4,8 @@ const initState = {
         email: 'demo@gmail.com',
         contact: '9999999'
     },
+    isMenuadded:false,
+    restaurantId:0,
     resInfo: {
         restaurantName: 'Maharaja Hotel',
         restaurantId: '1158',
@@ -25,7 +27,7 @@ const initState = {
     },
     resMenu: {
         restarentName: 'Maharaja Hotel',
-        restarentId:'AASAANEATS9810021673',
+        restarentId:'AASAANEATS9711189363',
         category: [
             {
                 name: 'Deserts',
@@ -61,6 +63,12 @@ const reducer = (state = initState, action) => {
                     ...action.resInfo
                 }
             }
+            case 'SET_IS_MENU_ADDED':
+                return {
+                    ...state,
+                    isMenuadded: action.isMenuadded,
+                    restaurantId:action.restaurantId
+                }    
         case 'Add_RESTMENU':
             let menu = state.resMenu.category;
             menu[action.ctype].menuitems = [...state.resMenu.category[action.ctype].menuitems,action.resMenu];
@@ -74,6 +82,20 @@ const reducer = (state = initState, action) => {
                     
                 }
             }
+            case 'SET_RESTMENU_INITIAL':
+                let menuitem = action.resMenu.category;
+                console.log('In Reducer',action.resMenu);
+                return {
+                    ...state,
+                    resMenu:{
+                        ...state.resMenu,
+                        ...action.resMenu,
+                        category: [
+                            ...menuitem
+                        ]
+                        
+                    }
+                }
         default:
             return state
     }

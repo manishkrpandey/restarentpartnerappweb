@@ -11,10 +11,27 @@ export const addRestraurent = (resInfo) =>{
     }
 }
 export const addRestraurentMenu = (resMenu , ctype) =>{
-    console.log(resMenu,ctype);
     return{
         type:'Add_RESTMENU',
         resMenu,
         ctype
     }
 }
+
+export const addRestraurentInitial = (resMenu) =>{
+    console.log('In Action',resMenu);
+    return{
+        type:'SET_RESTMENU_INITIAL',
+        resMenu
+    }
+}
+
+export const isMenuAlreadyAdded = (isMenuadded,restaurantId) =>{
+    console.log('In Action',isMenuadded,restaurantId);
+    return{
+        type:'SET_IS_MENU_ADDED',
+        restaurantId,
+        isMenuadded
+    }
+}
+

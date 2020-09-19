@@ -1,13 +1,5 @@
 import React, {useState , useEffect} from 'react'
-import FormGroup from '@material-ui/core/FormGroup';
-import Button from '@material-ui/core/Button';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import {addRestraurentMenu} from '../../Store/action/Action'
-import { storage } from "../../service/firebase";
-import { useSelector , useDispatch} from "react-redux";
-import PropTypes from 'prop-types';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
@@ -60,10 +52,12 @@ function Row(props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell component="th" scope="row">{
+          row.imageUrl ? <img src={row.imageUrl} alt="img" /> : null
+        }
           {row.name}
         </TableCell>
-        <TableCell align="right">{row.name}</TableCell>
+        <TableCell align="right">{row.variant.length}</TableCell>
 
       </TableRow>
       <TableRow>
@@ -78,12 +72,12 @@ function Row(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
+                  {row.variant.map((variant,index) => (
+                    <TableRow key={index}>
                       <TableCell component="th" scope="row">
-                        {historyRow.date}
+                        {variant.name}
                       </TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
+                      <TableCell align="right">{variant.price}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -102,7 +96,15 @@ function Row(props) {
 
 export default function CollapsibleTable(props) {
     const tabledata = props.tabledata.category;
-    console.log('tabledata',tabledata);
+      let menuitems = [];
+    let rows = tabledata.map((category)=>{
+      return category.menuitems.map((row) => {
+        menuitems.push(row);
+          return row;
+      } 
+      )
+    })
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -114,14 +116,9 @@ export default function CollapsibleTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {
-              tabledata.map((category)=>{
-                category.menuitems.map((row) => (
-                    <Row key={row.name} row={row} />
-                  ))
-              })
-
-          }
+      {
+        menuitems.map(menu=>(<Row row={menu}></Row>))
+      }
         </TableBody>
       </Table>
     </TableContainer>

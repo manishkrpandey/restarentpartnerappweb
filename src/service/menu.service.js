@@ -3,16 +3,16 @@ import {ENVIRONMENT as env} from './../config'
 
 
 export  const getRestaurentMenu = (data) =>{
-  return   postfetcher(env.GET_OTP_URL,data
-    ).then(res=>{
-      return {
-        code:'1234',
-        status:true
-      }
-    });
+  return   postfetcher(env.GET_RESTAURENT_MENU,data
+    ).then(res=>res);
 }
 
 export  const addRestaurentMenu = (data) =>{
-  return   postfetcher(env.GET_OTP_URL,data
+  return   postfetcher(env.SET_RESTAURENT_MENU,data
+    ).then(res=>res);
+}
+
+export  const updateRestaurentMenu = (data) =>{
+  return   postfetcher(env.SET_RESTAURENT_MENU,data
     ).then(res=>res);
 }

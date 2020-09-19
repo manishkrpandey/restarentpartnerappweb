@@ -7,7 +7,7 @@ export const ENVIRONMENT = {
     RESTAURENT_LIST_ALL_URL: "/restaurant/retrieveall",
     RESTAURENT_CREATE_URL:"restaurant/create",
     STATE_URL:'gen/actions?command=getstates',
-    GET_RESTAURENT_MENU:'',
-    SET_RESTAURENT_MENU:''
+    GET_RESTAURENT_MENU:'/restaurant/actions',
+    SET_RESTAURENT_MENU:'/restaurant/actions'
   };
   
