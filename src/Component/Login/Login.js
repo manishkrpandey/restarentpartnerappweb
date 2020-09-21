@@ -98,8 +98,8 @@ export default function SignIn(props) {
   const [password,setpassword]= useState('');
   const [restaurentId,setrestaurentId]= useState('');
   const [isValidMobileNumber,setisValidMobileNumber]= useState(false); 
-  const [isValidRestaurentId,setisValidRestaurentId]= useState(false); 
-  const [isValidpassword,setisValidpassword]= useState(false); 
+  //const [isValidRestaurentId,setisValidRestaurentId]= useState(false); 
+  //const [isValidpassword,setisValidpassword]= useState(false); 
   const [isValidMobileOTP,setisValidMobileOTP]= useState(false); 
   const formRef = useRef();
   const formRefOtp = useRef();
@@ -114,7 +114,7 @@ export default function SignIn(props) {
     "employee_type_id": "1"
   }
     event.preventDefault();
-     if(isValidMobileNumber && isValidRestaurentId && isValidpassword){
+     if(isValidMobileNumber){
       getOTPService(getOtpServiceReqObject).then((res) => {
        if(res && res.data && res.data.data){
         setOtpfromServer(res.data.data.otp);
@@ -198,14 +198,14 @@ export default function SignIn(props) {
     console.log('data.target.value',data.target.value);
     setpassword(data.target.value);
     let validPassword = passwordRegex.test(data.target.value);
-    setisValidpassword(validPassword);
+    //setisValidpassword(validPassword);
   }
 
   const checkValidateDataRestaurent = (data) =>{
     let passwordRegex = /[0-9a-zA-Z]/g
     setrestaurentId(data.target.value);
     let validRestaurentId = passwordRegex.test(data.target.value);
-    setisValidRestaurentId(validRestaurentId);
+    //setisValidRestaurentId(validRestaurentId);
   }
 
   return (
@@ -235,7 +235,7 @@ export default function SignIn(props) {
               error={!isValidMobileNumber}
             helperText={!isValidMobileNumber ? "Number is not valid. Please enter your registered Number":''}
             />
-            <TextField
+            {/* <TextField
               variant="outlined"
               margin="normal"
               required
@@ -264,7 +264,7 @@ export default function SignIn(props) {
               onChange={checkValidateDataPassword}
               error={!isValidpassword}
             helperText={!isValidpassword ? "Password is not valid. Please enter your password":''}
-            />
+            /> */}
             </>) : (<TextField
               ref={formRefOtp}
               variant="outlined"
