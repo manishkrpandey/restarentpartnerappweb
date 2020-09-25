@@ -7,6 +7,7 @@ const initState = {
     isMenuadded:false,
     restaurantId:0,
     resInfo: {
+        collection:{test:1234},
         restaurantName: 'Maharaja Hotel',
         restaurantId: '1158',
         status: 'open',
@@ -56,11 +57,13 @@ const reducer = (state = initState, action) => {
                 }
             }
         case 'Add_RESTRAURENT':
+            console.log(action);
             return {
                 ...state,
                 resInfo: {
                     ...state.resInfo,
-                    ...action.resInfo
+                   collection:action.resInfo
+                
                 }
             }
             case 'SET_IS_MENU_ADDED':

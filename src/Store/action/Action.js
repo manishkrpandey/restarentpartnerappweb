@@ -19,7 +19,6 @@ export const addRestraurentMenu = (resMenu , ctype) =>{
 }
 
 export const addRestraurentInitial = (resMenu) =>{
-    console.log('In Action',resMenu);
     return{
         type:'SET_RESTMENU_INITIAL',
         resMenu

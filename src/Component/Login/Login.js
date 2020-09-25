@@ -13,7 +13,8 @@ import { shallowEqual, useSelector,useDispatch } from 'react-redux'
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import {getRestaurentMenu} from './../../service/menu.service'
-import { addRestraurentInitial,isMenuAlreadyAdded } from './../../Store/action/Action'
+import { addRestraurentInitial,isMenuAlreadyAdded,addRestraurent } from './../../Store/action/Action'
+import { saveUserDataToLocalStorage,getLocalStorageData,clearStorageData} from './../../service/localStorageService'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -45,11 +46,7 @@ export default function SignIn(props) {
   const [otpfromServer,setOtpfromServer]= useState();
   const [registeredMobileNumber,setMobileNumber]= useState('');
   const [otpReceived,setotpReceived]= useState('');
-  const [password,setpassword]= useState('');
-  const [restaurentId,setrestaurentId]= useState('');
   const [isValidMobileNumber,setisValidMobileNumber]= useState(false); 
-  const [isValidRestaurentId,setisValidRestaurentId]= useState(false); 
-  const [isValidpassword,setisValidpassword]= useState(false); 
   const [isValidMobileOTP,setisValidMobileOTP]= useState(false); 
   const formRef = useRef();
   const formRefOtp = useRef();
@@ -60,10 +57,9 @@ export default function SignIn(props) {
  const handleSignIn = (event) => {
   const getOtpServiceReqObject = {
     "mobile_number":registeredMobileNumber,
-    "employee_type_id": "1"
   }
     event.preventDefault();
-     if(isValidMobileNumber && isValidRestaurentId && isValidpassword){
+     if(isValidMobileNumber){
       getOTPService(getOtpServiceReqObject).then((res) => {
        if(res && res.data && res.data.data){
         setOtpfromServer(res.data.data.otp);
@@ -98,28 +94,24 @@ export default function SignIn(props) {
   const handleVerifyOtp = (event) => {
     const verifyOtpServiceReqObject ={
       "mobile_number":registeredMobileNumber,
-      "employee_type_id": "1",
        "otp": otpReceived
     }
     event.preventDefault();
-    // let data = {
-    //   fname:'manish',
-    //   lName:'Kumar',
-    //   addOne:'Nasarganj',
-    //   addTwo:'Jharkhand',
-    //   pincode:'110075',
-    //   city:'Patna',
-    //   state:'Bihar',
-    //   country:'India'
-    // }
       if(isValidMobileOTP){
         verifyOTPService(verifyOtpServiceReqObject).then(res=>{
           if(res && res.data && res.data.status==="success"){
             localStorage.setItem('token','1234');
-            // dispatch(addProfileDtails(data));
             history.push('/home');
-            getRestaurentMenu({"command":"getmenu",
-            "restaurant_id":"21"}).then(res=>{
+            clearStorageData('userData');
+            saveUserDataToLocalStorage('userData',JSON.stringify(res.data.data[0]));
+            dispatch(addRestraurent(res.data.data[0]));
+            let restaurentData = JSON.parse(getLocalStorageData('userData'));
+            
+            getRestaurentMenu(
+              {
+                command:"getmenu",
+                restaurant_id:restaurentData.id
+          }).then(res=>{
               if(res.data && res.data.data){
                 let restaurentId = res.data && res.data.data && res.data.data[0].restaurant_id ? res.data.data[0].restaurant_id : 0;
                 let resMenu = JSON.parse(atob(res.data.data[0].menu_items));
@@ -161,19 +153,7 @@ export default function SignIn(props) {
     }
   }
 
-  const checkValidateDataPassword = (data) =>{
-    let passwordRegex = /[0-9a-zA-Z]/g
-    setpassword(data.target.value);
-    let validPassword = passwordRegex.test(data.target.value);
-    setisValidpassword(validPassword);
-  }
 
-  const checkValidateDataRestaurent = (data) =>{
-    let passwordRegex = /[0-9a-zA-Z]/g
-    setrestaurentId(data.target.value);
-    let validRestaurentId = passwordRegex.test(data.target.value);
-    setisValidRestaurentId(validRestaurentId);
-  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -202,36 +182,7 @@ export default function SignIn(props) {
               error={!isValidMobileNumber}
             helperText={!isValidMobileNumber ? "Number is not valid. Please enter your registered Number":''}
             />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Restaurent Id"
-              name="email"
-              autoComplete="email"
-              value={restaurentId}
-              autoFocus
-              onChange={checkValidateDataRestaurent}
-              error={!isValidRestaurentId}
-            helperText={!isValidRestaurentId ? "RestaurentId Id  is not valid. Please enter your registered Restaurent Id":''}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Password"
-              name="email"
-              autoComplete="email"
-              value={password}
-              autoFocus
-              onChange={checkValidateDataPassword}
-              error={!isValidpassword}
-            helperText={!isValidpassword ? "Password is not valid. Please enter your password":''}
-            />
+         
             </>) : (<TextField
               ref={formRefOtp}
               variant="outlined"

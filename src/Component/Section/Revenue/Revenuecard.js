@@ -15,15 +15,16 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 function Revenuecard(){
-    const resData = useSelector(state => state.reducer.resInfo)
+    const resData = useSelector(state => state.reducer.resInfo);
+    console.log('resData====>',resData.collection);
     const classes = useStyles();
     return(
         <>
         <Grid container spacing={3}>
             <Grid item xs={12}>
                 <Paper className={classes.paper}>
-                    <Typography>Id:{resData.restaurantId}</Typography>
-                    <h2>{resData.restaurantName}</h2>
+                    <Typography>Id:{resData.collection.rest_code}</Typography>
+                    <h2>{resData.collection.restaurant_name}</h2>
                     <ul className="revenueList row mt-2">
                         <li className="col text-left">
                             <span className="revenueTitle">Today's Revenue</span>

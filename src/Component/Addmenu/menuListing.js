@@ -35,6 +35,10 @@ const useRowStyles = makeStyles({
       borderBottom: 'unset',
     },
   },
+  menuImage:{
+    maxWidth: 100,
+    maxHeight: 100
+  }
 });
 
 
@@ -53,7 +57,7 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">{
-          row.imageUrl ? <img src={row.imageUrl} alt="img" /> : null
+          row.imageUrl ? <img src={row.imageUrl} className={classes.menuImage} alt="img" /> : null
         }
           {row.name}
         </TableCell>

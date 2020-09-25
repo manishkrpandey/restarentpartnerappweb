@@ -148,6 +148,7 @@ export default function Dashboard() {
 
   const handleClick = ()=> {
     localStorage.clear();
+    localStorage.removeItem('userData');
     history.push("/");
   }
 
